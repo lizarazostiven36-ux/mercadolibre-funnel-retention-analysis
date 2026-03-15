@@ -1,125 +1,125 @@
-# MercadoLibre Funnel & Retention Analysis
+# Análisis de Embudo y Retención – MercadoLibre
 
-## Project Overview
+## Descripción del Proyecto
 
-This project analyzes the user journey and retention patterns in MercadoLibre using SQL.
+Este proyecto analiza el recorrido del usuario y los patrones de retención en MercadoLibre usando SQL.
 
-The goal is to identify where users drop off in the purchase funnel and how well the platform retains users over time.
+El objetivo es identificar en qué etapa del embudo de compra se pierden los usuarios y qué tan bien la plataforma retiene a sus usuarios a lo largo del tiempo.
 
-This analysis was built as part of a Product Analytics case study, simulating the role of a **Growth & Retention Analyst** at MercadoLibre.
+Este análisis fue desarrollado como parte de un caso de estudio de Product Analytics, simulando el rol de **Analista de Crecimiento y Retención** en MercadoLibre.
 
 ---
 
-## Business Questions
+## Preguntas de Negocio
 
-1. Where do we lose the most users in the conversion funnel?
-2. What are the conversion rates between funnel stages?
-3. How does the funnel performance vary across countries?
-4. How well do we retain users at D7, D14, D21, and D28?
-5. How does retention behave by cohort and country?
+1. ¿En qué etapa del embudo perdemos más usuarios?
+2. ¿Cuáles son las tasas de conversión entre cada etapa del embudo?
+3. ¿Cómo varía el rendimiento del embudo entre países?
+4. ¿Qué tan bien retenemos usuarios en D7, D14, D21 y D28?
+5. ¿Cómo se comporta la retención por cohorte y por país?
 
 ---
 
 ## Dataset
 
-Two datasets were used:
+Se utilizaron dos tablas:
 
 ### `mercadolibre_funnel`
-Registers user events during the purchase journey.
+Registra eventos del usuario durante el proceso de compra.
 
-| Column | Type | Description |
+| Columna | Tipo | Descripción |
 |---|---|---|
-| user_id | STRING | Unique user identifier |
-| session_id | STRING | Unique session identifier |
-| event_name | STRING | Event performed (e.g. add_to_cart, purchase) |
-| event_times | FLOAT | Unix timestamp in milliseconds |
-| country | STRING | Country where the event was generated |
-| device_category | STRING | Device type (mobile, desktop, tablet) |
-| platform | STRING | Platform (android, iOS, web) |
-| product_cat | STRING | Product category |
-| price | FLOAT | Product price at the time of event |
-| currency | STRING | Currency (USD, ARS, etc.) |
-| referral_source | STRING | Traffic source (organic, paid_search, social) |
-| event_date | DATETIME | Human-readable event date |
+| user_id | STRING | Identificador único del usuario |
+| session_id | STRING | Identificador único de la sesión |
+| event_name | STRING | Evento realizado (ej. add_to_cart, purchase) |
+| event_times | FLOAT | Marca temporal en formato Unix (milisegundos) |
+| country | STRING | País donde se generó el evento |
+| device_category | STRING | Tipo de dispositivo (mobile, desktop, tablet) |
+| platform | STRING | Plataforma (android, iOS, web) |
+| product_cat | STRING | Categoría del producto |
+| price | FLOAT | Precio del producto en el momento del evento |
+| currency | STRING | Moneda (USD, ARS, etc.) |
+| referral_source | STRING | Fuente de tráfico (organic, paid_search, social) |
+| event_date | DATETIME | Fecha y hora legible del evento |
 
 ### `mercadolibre_retention`
-Tracks recurring user activity after signup.
+Mide la actividad recurrente de los usuarios después del registro.
 
-| Column | Type | Description |
+| Columna | Tipo | Descripción |
 |---|---|---|
-| user_id | STRING | Unique user identifier |
-| signup_date | DATE | User registration date |
-| country | STRING | User's country |
-| device_category | STRING | Device type |
-| platform | STRING | Platform |
-| day_after_signup | INTEGER | Days since registration |
-| activity_date | DATE | Date of user activity |
-| active | INTEGER | 1 = active, 0 = inactive |
-| prob_active | FLOAT | Predicted probability of activity |
+| user_id | STRING | Identificador único del usuario |
+| signup_date | DATE | Fecha de registro del usuario |
+| country | STRING | País del usuario |
+| device_category | STRING | Tipo de dispositivo |
+| platform | STRING | Plataforma |
+| day_after_signup | INTEGER | Días transcurridos desde el registro |
+| activity_date | DATE | Fecha de actividad del usuario |
+| active | INTEGER | 1 = activo, 0 = inactivo |
+| prob_active | FLOAT | Probabilidad estimada de actividad |
 
 ---
 
-## Funnel Stages Analyzed
+## Etapas del Embudo Analizadas
 
-| Stage | Event | Description |
+| Etapa | Evento | Descripción |
 |---|---|---|
-| 🟢 Discovery | `first_visit` | User enters the platform for the first time |
-| 🟡 Interest | `select_item` / `select_promotion` | User clicks on a product or promotion |
-| 🟠 Purchase Intent | `add_to_cart` | User adds product to cart |
-| 🔵 Checkout Start | `begin_checkout` | User starts payment process |
-| 🟣 Shipping Info | `add_shipping_info` | User enters shipping details |
-| 🟤 Payment Info | `add_payment_info` | User adds payment method |
-| 🔴 Purchase | `purchase` | User completes the purchase |
+| 🟢 Descubrimiento | `first_visit` | El usuario entra a la plataforma por primera vez |
+| 🟡 Interés | `select_item` / `select_promotion` | El usuario hace clic en un producto o promoción |
+| 🟠 Intención de Compra | `add_to_cart` | El usuario agrega un producto al carrito |
+| 🔵 Inicio de Compra | `begin_checkout` | El usuario inicia el proceso de pago |
+| 🟣 Información de Envío | `add_shipping_info` | El usuario ingresa su dirección de envío |
+| 🟤 Información de Pago | `add_payment_info` | El usuario agrega su método de pago |
+| 🔴 Compra | `purchase` | El usuario completa la compra |
 
 ---
 
-## Project Structure
+## Estructura del Proyecto
 
 ```
 mercadolibre-funnel-retention-analysis/
 │
 ├── README.md
 ├── sql/
-│   ├── 01_exploration.sql
-│   ├── 02_funnel_analysis.sql
-│   ├── 03_country_funnel.sql
-│   ├── 04_retention_analysis.sql
-│   └── 05_cohort_retention.sql
+│   ├── 01_exploracion.sql
+│   ├── 02_embudo_conversion.sql
+│   ├── 03_embudo_por_pais.sql
+│   ├── 04_retencion_por_pais.sql
+│   └── 05_retencion_por_cohorte.sql
 │
 └── insights/
-    └── executive_summary.md
+    └── resumen_ejecutivo.md
 ```
 
 ---
 
-## SQL Techniques Used
+## Técnicas de SQL Utilizadas
 
-- Common Table Expressions (CTEs)
-- Funnel Analysis with multi-stage LEFT JOINs
-- Conversion Rate Calculations
-- Cohort Definition with `DATE_TRUNC` and `TO_CHAR`
-- Retention Metrics using `CASE WHEN` + `COUNT DISTINCT`
-- `NULLIF` for safe division
-
----
-
-## Key Insights
-
-- The largest user drop occurs between **first visit → product selection** (~50% drop).
-- Some countries show significantly higher purchase conversion rates.
-- User retention decreases sharply after the first week across all cohorts.
-- D28 retention is consistently lower than D7 across all countries.
+- CTEs (Common Table Expressions)
+- Análisis de embudo con LEFT JOINs encadenados
+- Cálculo de tasas de conversión
+- Definición de cohortes con `DATE_TRUNC` y `TO_CHAR`
+- Métricas de retención con `CASE WHEN` + `COUNT DISTINCT`
+- `NULLIF` para evitar división por cero
 
 ---
 
-## Tools
+## Principales Hallazgos
 
-- SQL (PostgreSQL syntax)
+- La mayor caída del embudo ocurre entre **Select Item → Add to Cart** (~65 puntos porcentuales).
+- Uruguay y Bolivia lideran en conversión final; Ecuador, Colombia y Paraguay muestran 0% de compras.
+- La retención cae drásticamente después de la primera semana: ~85% en D7 vs ~2% en D28.
+- La cohorte de agosto 2025 muestra un rendimiento significativamente inferior al resto.
 
 ---
 
-## Author
+## Herramientas
+
+- SQL (sintaxis PostgreSQL)
+
+---
+
+## Autor
 
 **Stiven Lizarazo**  
-Junior Data Analyst  
-Project developed as part of TripleTen's Data Analytics program.
+Analista de Datos Junior  
+Proyecto desarrollado como parte del programa de Análisis de Datos de TripleTen.
